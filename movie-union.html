@@ -1,0 +1,23 @@
+<head>
+  <title>movie-union</title>
+</head>
+
+<body>
+  <h1>Find which actors are in two movies</h1>
+
+  {{> search}}
+  {{> search}}
+
+  <button>Submit</button>
+</body>
+
+<template name="search">
+  <input/>
+  <ul class="search-results">
+    {{#each movies}}
+      <li>
+        {{original_title}}
+      </li>
+    {{/each}}
+  </ul>
+</template>
