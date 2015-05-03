@@ -15,8 +15,10 @@
   <input/>
   <ul class="search-results">
     {{#each movies}}
-      <li>
-        {{original_title}}
+      <li class="movie-item" data-movie-id="{{id}}">
+        <img src="{{base_url}}w92{{poster_path}}"/>
+        <span class="title">{{title}}</span>
+        <span class="release-date">{{release_date}}</span>
       </li>
     {{/each}}
   </ul>
