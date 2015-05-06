@@ -4,6 +4,23 @@ if (Meteor.isClient) {
     Session.setDefault('base_url', result.images.base_url);
   });
 
+  var actorResult = new Blaze.ReactiveVar();
+
+  Template.registerHelper('base_url', function(context, options) {
+    return Session.get('base_url');
+  });
+
+  Template.body.events({
+    'click button': function() {
+      // Perform union on movie actors
+    }
+  });
+
+  Template.body.helpers({
+    actors: function() {
+      return actorResult.get();
+    }
+  });
 
   Template.search.created = function() {
     this.searchResult = new Blaze.ReactiveVar();
@@ -37,15 +54,14 @@ if (Meteor.isClient) {
   Template.search.helpers({
     movies: function() {
       return Template.instance().searchResult.get();
-    },
-    base_url: function() {
-      return Session.get('base_url');
     }
   });
 
-  Template.body.events({
-    'click button': function() {
-      // Perform union on movie actors
-    }
+  Template.union.helpers({
+
+  });
+
+  Template.union.events({
+
   });
 }

@@ -9,6 +9,8 @@
   {{> search}}
 
   <button>Submit</button>
+
+  {{> union}}
 </body>
 
 <template name="search">
@@ -19,6 +21,17 @@
         <img src="{{base_url}}w92{{poster_path}}"/>
         <span class="title">{{title}}</span>
         <span class="release-date">{{release_date}}</span>
+      </li>
+    {{/each}}
+  </ul>
+</template>
+
+<template name="union">
+  <ul class="actors-list">
+    {{#each actors}}
+      <li>
+        <img src="{{base_url}}w45"/>
+        <span class="name">{{name}}</span>
       </li>
     {{/each}}
   </ul>
