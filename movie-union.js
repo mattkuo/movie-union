@@ -1,19 +1,53 @@
 if (Meteor.isClient) {
   // Set the base url for images
   Meteor.call('getConfig', function(err, result) {
-    Session.setDefault('base_url', result.images.base_url);
+    Session.set('base_url', result.images.base_url);
   });
 
-  var actorResult = new Blaze.ReactiveVar();
+  var actorResult = new Blaze.ReactiveVar([]);
 
   Template.registerHelper('base_url', function(context, options) {
     return Session.get('base_url');
   });
 
   Template.body.events({
-    'click button': function() {
+    'click button': function(ev, template) {
       // Perform union on movie actors
+      //
+      var inputs = template.findAll('input.movie-input');
+
+      var ids = _.map(inputs, function(input, i) {
+        return input.getAttribute('data-movie-id');
+      });
+
+      Meteor.call('getActorData', ids, function(err, results) {
+        var dict = Object.create(null);
+        var selected = []
+
+        _.each(results, function(result) {
+
+          _.each(result.cast, function(cast) {
+            if (dict[cast.id] !== undefined && dict[cast.id].movieId_1 !== result.id) {
+              dict[cast.id].role_2 = cast.character;
+              dict[cast.id].movieId_2 = result.id;
+              selected.push(dict[cast.id]);
+            } else {
+              dict[cast.id] = {
+                movieId_1: result.id,
+                name: cast.name,
+                profile_path: cast.profile_path,
+                role_1: cast.character
+              };
+            }
+          });
+
+        });
+
+        actorResult.set(selected);
+
+      });
     }
+
   });
 
   Template.body.helpers({
@@ -24,7 +58,6 @@ if (Meteor.isClient) {
 
   Template.search.created = function() {
     this.searchResult = new Blaze.ReactiveVar();
-    this.selectedItem = new Blaze.ReactiveVar();
   }
 
   Template.search.events({
@@ -40,14 +73,15 @@ if (Meteor.isClient) {
 
     'focus input': function(ev, template) {
       var dropdown = template.find('ul.search-results');
-
     },
 
     'click li.movie-item': function(ev, template) {
       var target = ev.currentTarget;
       var movieId = target.getAttribute('data-movie-id');
-      template.selectedItem.set(movieId);
-      template.find('input').value = target.querySelector('span.title').textContent;
+      var inputElement = template.find('input.movie-input');
+
+      inputElement.setAttribute('data-movie-id', movieId);
+      inputElement.value = target.querySelector('span.title').textContent;
     }
   });
 
